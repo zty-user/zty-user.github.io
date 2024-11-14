@@ -1,0 +1,472 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>【FPGA】论文调研——Evaluating Fast Algorithm for CNNs and FPGAs | ZTY's Blog</title><meta name="author" content="ZTY"><meta name="copyright" content="ZTY"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="摘要 近年来，卷积神经网络(CNN)已被广泛应用于计算机视觉领域。FPGA由于其高性能和可重构性，已被充分开发为较有前途的CNN硬件加速器。然而，先前基于传统卷积算法的FPGA实现方案往往受到FPGA计算能力的限制，例如DSP的数量。 首先，为了解决这一问题，本文研究的论文《Evaluating Fast Algorithm for Convolutional Neural Networks on">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【FPGA】论文调研——Evaluating Fast Algorithm for CNNs and FPGAs">
+<meta property="og:url" content="https://zty-user.github.io/post/9d3964fd.html">
+<meta property="og:site_name" content="ZTY&#39;s Blog">
+<meta property="og:description" content="摘要 近年来，卷积神经网络(CNN)已被广泛应用于计算机视觉领域。FPGA由于其高性能和可重构性，已被充分开发为较有前途的CNN硬件加速器。然而，先前基于传统卷积算法的FPGA实现方案往往受到FPGA计算能力的限制，例如DSP的数量。 首先，为了解决这一问题，本文研究的论文《Evaluating Fast Algorithm for Convolutional Neural Networks on">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zty-user.github.io/img/butterfly-icon.png">
+<meta property="article:published_time" content="2023-04-04T13:29:08.000Z">
+<meta property="article:modified_time" content="2023-04-04T13:56:14.181Z">
+<meta property="article:author" content="ZTY">
+<meta property="article:tag" content="-FPGA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zty-user.github.io/img/butterfly-icon.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zty-user.github.io/post/9d3964fd.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '【FPGA】论文调研——Evaluating Fast Algorithm for CNNs and FPGAs',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  isShuoshuo: false
+}</script><meta name="generator" content="Hexo 6.3.0"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">ZTY's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">【FPGA】论文调研——Evaluating Fast Algorithm for CNNs and FPGAs</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">【FPGA】论文调研——Evaluating Fast Algorithm for CNNs and FPGAs</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-04T13:29:08.000Z" title="发表于 2023-04-04 21:29:08">2023-04-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-04-04T13:56:14.181Z" title="更新于 2023-04-04 21:56:14">2023-04-04</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Digital-Circuits-Design/">-Digital Circuits Design</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p><strong>摘要</strong></p>
+<p>近年来，卷积神经网络(CNN)已被广泛应用于计算机视觉领域。FPGA由于其高性能和可重构性，已被充分开发为较有前途的CNN硬件加速器。然而，先前基于传统卷积算法的FPGA实现方案往往受到FPGA计算能力的限制，例如DSP的数量。</p>
+<p>首先，为了解决这一问题，本文研究的论文《Evaluating Fast Algorithm for Convolutional Neural Networks on FPGAs》采用快速算法将特征映射转换为特定域，降低了算法复杂度，减少了DSP的使用数量，提升了FPGA的资源利用率。Winograd和快速傅里叶变换(FFT)作为快速算法的代表，首先将输入数据转换并滤波，然后逐元乘法，再进行逆变换得到最终输出。</p>
+<p>其次，调研的论文中还提出了一种在FPGA上实现快速算法的新架构。该设计采用了行缓冲结构，可以有效地重用不同块之间的特征图数据。该论文还有效地对Winograd&#x2F;FFT处理元素(PE)单元进行流水线化，并通过并行化启动多个PE。</p>
+<p>最后，论文提出了一个分析模型来预测资源的使用和性能，并使用了最先进的CNN实验测出了FPGA的最佳性能和能源效率。在Xilinx ZCU102平台上，使用Winograd实现了AlexNet和VGG16的854.6 GOP&#x2F;s和2479.6 GOP&#x2F;s。在Xilinx ZC706平台上，使用Winograd实现了Resnet的130.4 GOP&#x2F;s，使用FFT实现了YOLO的2011 GOP&#x2F;s。</p>
+<p><strong>关键词：CNN、FPGA、快速算法、新架构、行缓冲、PE、流水化、并行化、分析模型</strong></p>
+<p>目录</p>
+<p><a href="#_toc27927">1. 前言	4</a></p>
+<p><a href="#_toc92">2. 背景知识	5</a></p>
+<p><a href="#_toc3393">2.1 CNN介绍	5</a></p>
+<p><a href="#_toc9186">2.2 适用于CNNs的快速算法	6</a></p>
+<p><a href="#_toc13250">2.2.1 基于Winograd算法的卷积运算	7</a></p>
+<p><a href="#_toc9674">2.2.2 基于FFT算法的卷积运算	8</a></p>
+<p><a href="#_toc21482">2.2.3 Winograd和FFT算法的比较	9</a></p>
+<p><a href="#_toc16727">3. 数据处理过程	10</a></p>
+<p><a href="#_toc17496">4. 主要架构设计	11</a></p>
+<p><a href="#_toc361">4.1 架构整体概览	12</a></p>
+<p><a href="#_toc16424">4.2 行缓冲区的设计	12</a></p>
+<p><a href="#_toc2433">4.3 循环分块技术	13</a></p>
+<p><a href="#_toc9827">4.3.1 循环分块(Loop Tiling)的概念介绍	13</a></p>
+<p><a href="#_toc2027">4.3.2 论文中循环分块技术的应用	14</a></p>
+<p><a href="#_toc4605">5. PE单元设计	14</a></p>
+<p><a href="#_toc8756">5.1 基于Winograd算法的PE设计	14</a></p>
+<p><a href="#_toc30459">5.2 基于FFT算法的PE设计	15</a></p>
+<p><a href="#_toc30293">5.3 PE并行化与本地内存优化	15</a></p>
+<p><a href="#_toc5479">5.3.1 利用循环展开(Loop Unrolling)实现PE的并行化	15</a></p>
+<p><a href="#_toc24127">5.3.2 本地内存优化(Local Memory Promotion)	16</a></p>
+<p><a href="#_toc22844">6. 评估资源和性能的模型	16</a></p>
+<p><a href="#_toc20646">6.1 对于资源评估的建模	16</a></p>
+<p><a href="#_toc13946">6.2 对于性能评估的建模	17</a></p>
+<p><a href="#_toc20793">7. 自动化设计链	18</a></p>
+<p><a href="#_toc19191">8. 实验评估测试	19</a></p>
+<p><a href="#_toc13241">8.1 实验设置	19</a></p>
+<p><a href="#_toc7089">8.2 Winograd算法的性能分析	19</a></p>
+<p><a href="#_toc20606">8.3 FFT算法的性能分析	20</a></p>
+<p><a href="#_toc12712">8.4 资源的评估验证	20</a></p>
+<p><a href="#_toc32364">8.5 具体情况的研究	21</a></p>
+<p><a href="#_toc14982">8.5.1 AlexNet	21</a></p>
+<p><a href="#_toc1396">8.5.2 VGGNet	22</a></p>
+<p><a href="#_toc13224">8.5.3 YOLO	23</a></p>
+<p><a href="#_toc5634">8.5.4 Resnet	24</a></p>
+<p><a href="#_toc6720">8.6 与GPU的比较	24</a></p>
+<p><a href="#_toc29971">9. 总结	25</a></p>
+<p><a href="#_toc12708">参考文献	25</a></p>
+<h1 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a><a name="_toc27927"></a><strong>1. 前言</strong></h1><p>深度卷积神经网络(CNN)在图像分类、目标检测、语义分割等各种计算机视觉任务中都取得了显著的性能。CNN性能的改进是以巨大的计算复杂度为代价的，因为它需要对特征图中的所有区域进行全面评估和计算。面对如此巨大的计算压力，硬件加速器，如GPU (graphics processing unit)、FPGA (field-programmable gate arrays)、ASIC (application specific integrated circuit)等已被应用于对CNN进行加速。在加速器中，FPGA因其高性能、和可重构性而成为一种较好的解决方案。更重要的是，使用C或C++的高层次综合(HLS)大大降低了FPGA的编程障碍，提高了效率。</p>
+<p>CNN通常涉及多层，其中一层的输出特征图是下一层的输入特征图。先前的研究表明，最先进的CNN的计算是由卷积层主导的。如果使用空间卷积算法，输出特征图中的每个元素将通过使用多次乘累加(MAC)操作单独计算。而此前使用该算法的CNN FPGA解决方案已经初步成功。在所调研的论文《Evaluating Fast Algorithm for Convolutional Neural Networks on FPGAs》中显示了FPGA加速器加速CNN的资源利用情况，如表一所示。在这些设计中，可以得出结论，DSP是消耗最多的资源，因为典型CNN的操作主要由MAC单元组成，乘法器通常由DSP在FPGA上实现。</p>
+<p><strong>表1 先前FPGA加速CNN的资源使用情况:</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.002.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.002"></p>
+<p>除了空间卷积算法外，一些设计选择将卷积变为通用矩阵乘法(GEMM)。然而，这种方法只是减少了访问内存的次数，并没有减少乘法的数量。基于减少乘法次数可以提高DSP效率的做法，快速算法被广泛应用于降低卷积运算的算术复杂度。实践证明，Winograd快速算法和经典的FFT算法可以显著降低算法复杂度。在应用FFT和Winograd算法时，将输入特征映射和滤波器转换到相应的域，然后执行元素矩阵乘法(element-wise matrix-乘法，EWMM)。约简程度取决于快速算法的参数。例如，使用6 × 6输入块的Winograd算法可以为3 × 3滤波器带来4倍的乘法缩减，使用8 × 8输入块的FFT算法可以为3 × 3滤波器带来3.45倍的乘法缩减。</p>
+<p>更重要的是，目前CNN的趋势是使用更小的滤波器。例如论文中提到的VGG16和YOLO只使用3×3滤波器，而3×3和5×5过滤器广泛应用于Resnet和Googlenet。并且已经证明了快速Winograd算法和FFT可以用来实现具有较小滤波器的CNN。这为使用快速算法高效实现CNN提供了机会。然而，在FPGA上使用快速算法很有吸引力，但仍然存在几个问题。首先，设计不仅要最小化内存带宽需求，而且要使内存吞吐量与计算匹配，这是至关重要的。其次，将快速算法映射到FPGA上存在较大的设计空间。很难推断出哪些设计将提高或损害性能。</p>
+<p>本文所调研的论文《Evaluating Fast Algorithm for Convolutional Neural Networks on FPGAs》做出了以下贡献：</p>
+<ul>
+<li>提出了在FPGA上使用Winograd和FFT算法高效实现CNN的框架。</li>
+<li>提出了采用行缓冲结构、高效的全流水线PE和并行化PE的架构。</li>
+<li>开发分析资源和性能的模型，并利用这些模型探索设计空间，以确定最优参数。该模型集成了自动工具链，可以自动生成快速算法的实现。</li>
+</ul>
+<p>论文中也通过实验得到了一些令人信服的结果：使用了最先进的CNN的实验测得了fpga上CNN的最佳性能和能源效率。论文中的团队在ZCU102平台上实现了卷积层的平均1006.4  GOP&#x2F;s和2601.3 GOP&#x2F;s，整体AlexNet和VGG的平均854.6 GOP&#x2F;s和2479.6 GOP&#x2F;s。 AlexNet的能源效率为36.2 GOP&#x2F;s&#x2F;W, VGG16的能源效率为105.4 GOP&#x2F;s&#x2F;W。在ZC706平台上，卷积层的平均GOP&#x2F;s分别为163.1 GOP&#x2F;s和2011 GOP&#x2F;s，整体Resnet和YOLO的平均GOP&#x2F;s分别为130.4和2011 GOP&#x2F;s。Resnet的能源效率为13.8 GOP&#x2F;s&#x2F;W，YOLO的能源效率为21.4 GOP&#x2F;s&#x2F;W。</p>
+<ol start="2">
+<li><h1 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a><a name="_toc92"></a><strong>背景知识</strong></h1><ol>
+<li><h2 id="CNN介绍"><a href="#CNN介绍" class="headerlink" title="CNN介绍"></a><a name="_toc105073162"></a><a name="_toc3393"></a><strong>CNN介绍</strong></h2><p><strong>图1：深度学习的整体框架:</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.003.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.003"></p>
+</li>
+</ol>
+</li>
+</ol>
+<p>深度学习的整体过程如图1所示，首先需要初始化一些参数，通过摄取外部的相关信息进行前向传播计算，之后会计算损失函数，并通过反向传播来修正优化参数，已达到更为准确的预测。CNN是深度学习中的一类前馈人工神经网络，用于前向传播的过程。一般来说，CNN由一系列层组成，每一层又由输入特征图、过滤器和输出特征图组成。可以使用在训练过程中学习到特征的滤波器从输入图像中提取某些特征，如图2所示。在典型CNN的所有层中，卷积层占了主要的计算量。</p>
+<p><strong>图2：CNN每一层的计算过程:</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.004.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.004"></p>
+<p>CNN中的空间卷积算法由多个for循环组成，如下式所示:</p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.005.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.005"></p>
+<p>将相应的输入特征数据与滤波器进行相乘和累加，分别计算输出特征图中的每个元素。通过平面化输入特征映射和重新排列滤波器，空间卷积可以映射到GEMM (General Matrix Multiplication）。这种方法会增加对局部内存的要求，因为输入特征图中的像素在循环展开过程中会被复制多次。GEMM因其对不同层类型的通用性而被广泛应用于GPU实现中。然而，GEMM在CNN的实现中没有贡献算术简化，但GEMM的优化可以减少内存访问次数，提高速度。</p>
+<ol>
+<li><h2 id="适用于CNNs的快速算法"><a href="#适用于CNNs的快速算法" class="headerlink" title="适用于CNNs的快速算法"></a><a name="_toc9186"></a><strong>适用于CNNs的快速算法</strong></h2>除了空间算法和GEMM外，Winograd和FFT等快速算法也被应用于卷积的加速。与空间卷积算法不同的是，该算法利用输入特征图中同一块元素之间的结构相似性，可以生成一个输出特征图块。更清楚地说，给定大小为n × n的输入块和r × r滤波器，论文使用快速算法生成大小为m × m (n &#x3D; m + r−1)的输出特征图。因此，基于这些快速算法的卷积可以用一个通用公式来描述：</li>
+</ol>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.006.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.006"></p>
+<p>从公式中可以看出快速卷积算法主要有三个步骤：</p>
+<ul>
+<li><p><strong>输入和滤波器的转换:</strong> 首先，将输入块和过滤器转换为相同的形状。Winograd卷积和FFT卷积使用不同的变换函数，后面会介绍。</p>
+</li>
+<li><p><strong>元素相乘(EWMM):</strong> 其次，在两种算法中，对得到的中间矩阵进行EWMM。微小的区别在于FFT卷积使用复杂的数据，因此需要更多的计算资源。</p>
+</li>
+<li><p><strong>逆变换:</strong> 最后，将EWMM结果变换为原始卷积结果。逆变换函数也根据第一阶段使用的函数的不同而不同。</p>
+<ol>
+<li><h3 id="基于Winograd算法的卷积运算"><a href="#基于Winograd算法的卷积运算" class="headerlink" title="基于Winograd算法的卷积运算"></a><a name="_toc13250"></a><strong>基于Winograd算法的卷积运算</strong></h3>Winograd描述了一种计算多项式乘法的技术，它等价于卷积运算。论文可以通过将滤波器与输入F(m, r)卷积来表示计算m个输出的结果。例如，F(2,3)的空间算法需要m × r (2 × 3 &#x3D; 6)次乘法，而Winograd算法用以下方式计算F(2,3)，只需要n &#x3D; m + r−1(4)次乘法，如下式所示：</li>
+</ol>
+</li>
+</ul>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.007.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.007"></p>
+<p>可以发现，Winograd算法将矩阵z和矩阵x的计算转变成了计算m1,m2,m3和m4，这四项的表达式如上式所示。其实矩阵x可以看作CNN当中的输入特征图的一部分数据，x矩阵可以看作做滤波器也就是卷积核，而与x有关的矩阵是确定的一些参数，可以预先计算好，因此计算m1,m2,m3和m4只需要四次乘法。减少乘法的次数可以减少DSP的使用数量，对提升FPGA的性能有较大的帮助，因此被称作为快速算法。 </p>
+<p><strong>图3：实际二维卷积中的Winograd算法:</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.008.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.008"></p>
+<p>在实际的CNN二维卷积操作过程中，首先将需要卷积的每一个特征图块展开到k矩阵的一行，如图3所示，将滤波器中的参数展开到w矩阵的一列，然后进行矩阵相乘。使用Winograd算法的过程可以由下式统一给出：</p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.009.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.009"></p>
+<ol>
+<li><h3 id="基于FFT算法的卷积运算"><a href="#基于FFT算法的卷积运算" class="headerlink" title="基于FFT算法的卷积运算"></a><a name="_toc9674"></a><strong>基于FFT算法的卷积运算</strong></h3>FFT是Cooley - Turkey在1995年提出的，用于加快机器的计算速度，可以将常数复数乘法从O(N^2)减少到O(N log N)，且没有精度损失。计算方法如下:</li>
+</ol>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.010.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.010"></p>
+<p>在上式中，FFT是由小尺度离散傅里叶变换按照划分而来，也称为蝶形计算。值得注意的是，Cooley-Turkey算法仅在FFT大小为2的幂时有效。图4给出了FFT size &#x3D; 4的FFT算法简例。在本例中，完成FFT需要两个阶段。在这些阶段中，用两点(基数-2 FFT)进行了若干次蝶形计算。</p>
+<p><strong>图4：基于蝶形运算的FFT算法：</strong></p>
+<p><code>      </code><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.011.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.011"></p>
+<p>FFT计算大小为2的幂，并且计算结果可能有复数。所以最后需要crop操作对数据进行修正，符合输出的是实数，并且位宽一致，如下式所示。</p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.012.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.012"></p>
+<ol>
+<li><h3 id="Winograd和FFT算法的比较"><a href="#Winograd和FFT算法的比较" class="headerlink" title="Winograd和FFT算法的比较"></a><a name="_toc21482"></a><strong>Winograd和FFT算法的比较</strong></h3>表2对卷积算法进行了比较，结果表明Winograd算法和FFT算法可以有效地降低算法复杂度和变换开销。</li>
+</ol>
+<p><strong>表2：卷积算法的比较</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.013.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.013"></p>
+<p>Winograd算法和FFT算法虽然流程有相似之处，但是依然有所不同。、</p>
+<ul>
+<li><strong>乘法节省：</strong></li>
+</ul>
+<p>在快速算法中，只有阶段2的元素相乘需要使用到乘法。对于Winograd算法，乘法的次数是n^2。例如，用3 × 3滤波器卷积6 × 6输入块生成的4 × 4输出块，空间卷积需要42 × 32 &#x3D; 144次乘法，而Winograd算法只需要6 × 6 &#x3D; 36次乘法。然而，FFT算法涉及复数。一般来说，一个复杂的乘法需要四次实乘法，如下式所示。</p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.014.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.014"></p>
+<p>此外，在深度学习场景中，输入通常为实值，这使得FFT变换后的矩阵具有Hermitian对称性。Hermitian Matrix指的是自共轭<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%9F%A9%E9%98%B5/18069?fromModule=lemma_inlink">矩阵</a>。矩阵中每一个第i行第j列的元素都与第j行第i列的元素的共轭相等。矩阵<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%B8%BB%E5%AF%B9%E8%A7%92%E7%BA%BF?fromModule=lemma_inlink">主对角线</a>上的元素都是实数的，其<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%89%B9%E5%BE%81%E5%80%BC?fromModule=lemma_inlink">特征值</a>也是实数，如图4所示。</p>
+<p><strong>图5：Hermitian Matrix的共轭对称性：</strong> </p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.015.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.015"></p>
+<p>在图5的例子中，可以观察到X(0)和X(2)，以及X(1)和X(3)表现出Hermitian对称。</p>
+<p><strong>表3：两种快速算法在节省乘法运算方面的比较：</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.016.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.016"></p>
+<p>从图中可以看出，在相同的输入条件下，例如n&#x3D;8,r&#x3D;3,m&#x3D;6的条件下，Winograd比FFT节省的乘法次数更多。原因在于，FFT考虑了复数运算，运算出的矩阵呈现Hermitian对称，所以相当于一半的矩阵数据都是没用的，多用了一些乘法操作。</p>
+<ul>
+<li><strong>常数范围:</strong></li>
+</ul>
+<p>转换阶段的常数乘法可以用移位操作代替，移位操作可以在FPGA上使用查找表(LUT)实现。因此，常数的范围决定了精度要求。换句话说，常数越大或越小，需要的LUT就越多。论文比较了Winograd算法和FFT算法中的常数。在Winograd，常数是由多项式插值确定的。在FFT中，常数为旋转因子。在表3中，论文中列出了一些常用的块大小的常数，从中可以看出，在相同的输入块大小下，Winograd算法有更高的精度要求。</p>
+<ol start="2">
+<li><h1 id="数据处理过程"><a href="#数据处理过程" class="headerlink" title="数据处理过程"></a><a name="_toc16727"></a><strong>数据处理过程</strong></h1>基于Winograd和基于FFT的卷积都使用块作为基本单位。在信号处理中，有两种常用的方法将特征图分割成块，如下所示：</li>
+</ol>
+<ul>
+<li><p><strong>重叠相加法(Overlap -and- Add, OaA):</strong></p>
+<ul>
+<li>在这种方法中，输入被分割成几个没有重叠的块。然后，输出块进行重叠，并叠加在一起以得到最终结果，如图6(a)所示。</li>
+</ul>
+</li>
+<li><p><strong>重叠保留法(Overlap-and-Save, OaS):</strong></p>
+<ul>
+<li><p>如图6(b)所示，在该方法中，来自重叠输入块的输出块进行拼接直接得到结果，不需要进行重叠。</p>
+<p><strong>图6：重叠相加法和重叠保留法：</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.017.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.017"></p>
+<p>虽然这两种方法具有相同的算法复杂度，但在FPGA实现中，OaA方法会导致严重的内存冲突。如图6(a)所示，重叠部分共享相同的地址，当任务完全流水线时，MAC(乘累加)操作需要块随机存储器(BRAM)中至少两个端口。因此，论文中选择OaS方法作为数据流来解决数据依赖问题。</p>
+<p>结合OaS方法，论文中将快速算法应用于输出块的生成。快速卷积算法的伪代码如图7所示。</p>
+<p><strong>图7：快速卷积法的伪代码：</strong></p>
+<p><code>       </code><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.018.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.018"></p>
+<ol start="2">
+<li><h1 id="主要架构设计"><a href="#主要架构设计" class="headerlink" title="主要架构设计"></a><a name="_toc17496"></a><strong>主要架构设计</strong></h1><p>基于OaS，论文提出了一种基于Winograd和FFT卷积的CNN FPGA加速器设计。然而，也存在一些挑战。首先，卷积层具有较高的内存带宽要求。论文观察到相邻的块在水平和垂直上共享输入特征图数据。论文利用这一观察来设计行缓冲区，以最大化数据重用。其次，与空间卷积算法不同，快速算法一次生成一个输出特征图的块。这要求在转换开始之前，输入块和过滤器中的所有元素同时就绪。论文为Winograd算法和FFT算法设计了一个高效的PE单元，然后通过并行化多个PE来实现卷积的计算。第三，论文提出了一个性能预测的分析模型，并利用它来有效地进行探索。</p>
+</li>
+<li><h2 id="架构整体概览"><a href="#架构整体概览" class="headerlink" title="架构整体概览"></a><a name="_toc361"></a><strong>架构整体概览</strong></h2><p><strong>图8：整体架构概览：</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.019.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.019"></p>
+</li>
+</ol>
+<p>图8给出了FPGA上基于快速算法的卷积层架构概述。论文中采用行缓冲区来实现数据重用。图8中有多通道的输入特征映射(M) ，PE (Winograd PE或FFT PE)获取来自行缓冲区的数据。具体来说，给定一个n×n的输入块，PE将生成一个m×m的输出块。论文通过并行化多个通道来进行计算。最后论文使用双缓冲区来重叠数据传输和计算。所有输入数据(例如，输入特征映射和过滤器)最初存储在外部存储器中。输入和输出特征映射通过先输入先输出(FIFO)传输到FPGA。然而，随着卷积网络的深入，过滤器的大小显著增加。将所有滤波器加载到片上存储器中是不现实的。在论文的设计中，将输入和输出通道分成几组。每个组只包含过滤器的一部分，在需要时逐组加载过滤器。</p>
+<ol>
+<li><h2 id="行缓冲区的设计"><a href="#行缓冲区的设计" class="headerlink" title="行缓冲区的设计"></a><a name="_toc16424"></a><strong>行缓冲区的设计</strong></h2>如图8所示，输入的行缓冲区采用双缓冲区的设计，实现n行的卷积计算和m行的数据传输。论文将上方用于m行数据传输的缓冲区记作A缓冲区，将下方实现n行卷积计算的缓冲区记作B缓冲区。由于论文中使用的是重叠保留法计算卷积，因此在每一次的输入块（图7中的Input Tile）进行运算的时候，前一个输入块和这一轮的输入块应该有一部数据是重叠的，也就是数据重用的部分，如果这些数据在每一轮卷积中都从内从中读取出来然后再放进内存，那么对内存的访问次数将会很多，降低运算的速度。</li>
+</ol>
+<p>图8输入缓冲区中下方B缓冲区的数据移动模式可以确保重叠部分的数据在缓冲区多待一轮，不会重复的从内存中取出放回，提高了运算速度。首先一开始，PE直接读取下方B缓冲区的n行数据进行运算，之后由于n行中的下面2行属于重叠部分，在第二次运算过程中还会用到，所以将最下面2行的数据移动到B缓冲区的最上面两行，n行下面的m行被A缓冲区新来的数据覆盖。实现了重叠保留法的具体操作，同时减少了内存的访问次数。</p>
+<ol>
+<li><h2 id="循环分块技术"><a href="#循环分块技术" class="headerlink" title="循环分块技术"></a><a name="_toc2433"></a><strong>循环分块技术</strong></h2><ol>
+<li><h3 id="循环分块-Loop-Tiling-的概念介绍"><a href="#循环分块-Loop-Tiling-的概念介绍" class="headerlink" title="循环分块(Loop Tiling)的概念介绍"></a><a name="_toc9827"></a><strong>循环分块(Loop Tiling)的概念介绍</strong></h3><p><strong>图9：简单的双循环访问数组的代码：</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.020.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.020">****</p>
+</li>
+</ol>
+</li>
+</ol>
+<p>论文知道，对于循环访问数组如而言，如图9所示，无论是 CPU 还是 GPU在每次访问 A[i] 的时候，并不是只从 memory 取一个 float，而是以 Cache Line（约 64Byte）为单位去访问的。这样的话，当访问 A[0] 时，其实从 A[0] 到 A[15] 都已经在同一个 CacheLine 里，所以 i&#x3D;1 到 i&#x3D;15 时的访存速度会更快。</p>
+<p>但问题在于 Cache 的总容量是有限制的（如 现代 CPU 的 L1 Data Cache 约 32KB 大小），当 Cache 满了之后，如果还需要获取新的 Cache Line，就得把旧的 Cache Line 给退还到 memory 中。</p>
+<p>所以，上述例子中，如果 N 非常大，那么当你访问到 N-1 的时候，A[0-15] 所在的 Cache Line 已经被退还到memory中了。这时如果再回头访问 A[0]，就得重新把这个 Cache Line 从 memory 中取出，速度比较慢。如同上面的这个双层循环的例子，如果 M 很大，那么每次 i 加一 时，就得重新从 memory 访问，访存速度就会很慢。 因此，论文引入循环分块技术Loop Tiling 去解决上述问题。</p>
+<p>Loop Tiling 的目的是确保一个 Cache Line 在被用过以后，后面再用的时候其仍然在 cache 中，没有被退还。实现思路是：当一个数组总的数据量无法适合缓存的大小时，把总数据分成一个个块去访问，令每个块都可以适合内存的大小。</p>
+<p><strong>图10：利用循环分块的访问数组代码：</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.021.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.021"></p>
+<p>具体做法如图9所示。把一层内层循环分成 outer loop * inner loop。然后把 outer loop 移到更外层去，从而确保 inner loop 一定能适合缓存的大小。当论文把内层循环给变成更小的 inner loop，那么整个待访问数组适合缓存的大小，外层开始循环时就不会出现 cache miss 了。</p>
+<ol>
+<li><h3 id="论文中循环分块技术的应用"><a href="#论文中循环分块技术的应用" class="headerlink" title="论文中循环分块技术的应用"></a><a name="_toc2027"></a><strong>论文中循环分块技术的应用</strong></h3><p><strong>图11：论文中循环分块技术的应用：</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.022.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.022">****</p>
+</li>
+</ol>
+<p>论文中将计算卷积的最内层的两层循环利用循环分块技术进行处理，其中将输入特征图按Pm进行分块，输出特征图按Pn进行分块，进行实际的卷积运算，如图11所示。</p>
+<ol start="2">
+<li><h1 id="PE单元设计"><a href="#PE单元设计" class="headerlink" title="PE单元设计"></a><a name="_toc4605"></a><strong>PE单元设计</strong></h1><p><strong>图12：PE单元的整体设计：</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.023.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.023"></p>
+</li>
+<li><h2 id="基于Winograd算法的PE设计"><a href="#基于Winograd算法的PE设计" class="headerlink" title="基于Winograd算法的PE设计"></a><a name="_toc8756"></a><strong>基于Winograd算法的PE设计</strong></h2><p>在Winograd PE设计中，论文选择了在线的转换过滤器。这样不仅节省了片上的BRAM资源，而且由于输入和滤波器的转换可以并行进行，不会造成额外的延迟。观察到变换矩阵(B, G，A)只要输入块大小和滤波器大小给定就可以确定，<strong>论文变将换阶段的乘法替换为常数乘法，这些常数乘法是使用移位操作计算的。使用LUT阵列可以很容易地实现移位操作，因此可以降低DSP的利用率。</strong>阶段2中的乘法是并行执行的，因此论文将中间数据矩阵存储在寄存器中，以提高内存带宽，因为它减轻了内存冲突。</p>
+</li>
+<li><h2 id="基于FFT算法的PE设计"><a href="#基于FFT算法的PE设计" class="headerlink" title="基于FFT算法的PE设计"></a><a name="_toc30459"></a><strong>基于FFT算法的PE设计</strong></h2><p>传统的FFT实现主要关注的是较大数据量的计算，其中可能包含数千个信号。在这些情况下，由于资源限制，FFT计算不能完全并行。而在CNN的计算中，过滤器的大小相对较小，特征图的大小也会随着CNN网络的深入而减小。因此，应用小尺度FFT算法是合理的。论文将PE专门用于实现FFT的卷积。在变换阶段，为了执行2-D-FFT，论文首先对输入块的每一行进行1-D-FFT，然后对中间矩阵进行转置，为下一行的1-D-FFT做准备，然后再进行一次换位，得到正确的FFT结果。请注意，阶段1和3中的乘法也是常数乘法，因此不需要任何DSP。此外，论文利用输入和滤波器的矩阵共轭对称来减少乘法次数和内存需求，如图12所示。与Winograd PE类似，中间矩阵存储在寄存器中，常数乘法被移位操作取代。</p>
+</li>
+<li><h2 id="PE并行化与本地内存优化"><a href="#PE并行化与本地内存优化" class="headerlink" title="PE并行化与本地内存优化"></a><a name="_toc30293"></a><strong>PE并行化与本地内存优化</strong></h2><ol>
+<li><h3 id="利用循环展开-Loop-Unrolling-实现PE的并行化"><a href="#利用循环展开-Loop-Unrolling-实现PE的并行化" class="headerlink" title="利用循环展开(Loop Unrolling)实现PE的并行化"></a><a name="_toc5479"></a><strong>利用循环展开(Loop Unrolling)实现PE的并行化</strong></h3><p>环路展开技术可以提高FPGA器件中海量计算资源的利用率。沿着不同的循环维度展开将产生不同的实现变量。</p>
+<p><strong>图13：简单的循环展开实例：</strong></p>
+</li>
+</ol>
+</li>
+</ol>
+<p><code>  </code><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.024.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.024"><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.025.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.025"></p>
+<p>图13左侧是一个简单的循环代码，可以发现变量i需要循环100次来完成累加操作，通过循环展开实现的代码如图右边所示。可以发现，此时循环块中的累加需要同时执行两次，而变量i只需循环50次。对于硬件电路而言，就是一种增加电路面积而减少运行时间的做法，而这对于FPGA是有利的，因为可以提升FPGA中LUT的资源利用率，同时减少运算时间。</p>
+<p>如图所示，论文通过实现内层循环的展开来实现PE的并行化。在并行计算中，交换循环的顺序，如图所示，以避免数据重复。值得注意的是，Pm×Pn的PEs只需要输入转换Pm次，因此论文将Pm设置为计算中的最外循环。类似地，逆变换只需要执行Pn次。所以论文中不立即进行逆变换。EWMM操作的结果在所有输入通道上累积，然后将累积的结果转换到空间域。</p>
+<ol>
+<li><h3 id="本地内存优化-Local-Memory-Promotion"><a href="#本地内存优化-Local-Memory-Promotion" class="headerlink" title="本地内存优化(Local Memory Promotion)"></a><a name="_toc24127"></a><strong>本地内存优化(Local Memory Promotion)</strong></h3><p>如果通信部分的最内层循环，例如图12中的循环维度ti与数组无关，则不同循环迭代之间将存在冗余内存操作。本地内存提升可以减少冗余操作。在图14中，最内层的循环维度ti与数组输出fm无关。因此，对数组输出fm的访问可以提升到外部循环。注意，提升过程可以迭代执行，直到围绕访问的最内层循环最终相关为止。通过局部内存提升，可以减少内存访问速度，提升速度。</p>
+<p><strong>图14：本地内存优化：</strong></p>
+</li>
+</ol>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.026.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.026"></p>
+<ol start="2">
+<li><h1 id="评估资源和性能的模型"><a href="#评估资源和性能的模型" class="headerlink" title="评估资源和性能的模型"></a><a name="_toc22844"></a><strong>评估资源和性能的模型</strong></h1><ol>
+<li><h2 id="对于资源评估的建模"><a href="#对于资源评估的建模" class="headerlink" title="对于资源评估的建模"></a><a name="_toc20646"></a><strong>对于资源评估的建模</strong></h2><p><strong>图15：使用DSP数量的计算建模：</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.027.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.027"></p>
+</li>
+</ol>
+</li>
+</ol>
+<p>图15是论文对使用DSP数量的建模，可以发现Winograd算法相比于FFT算法使用的DSP要更少，这与之前的结论是吻合的，因为FFT还要考虑复数的相乘，一次复数相乘需要四次实数乘法，同时输出结果矩阵具有共轭对称特性，浪费了一半运算数据。</p>
+<p><strong>图16：使用LUT数量的计算建模：</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.028.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.028"></p>
+<p><strong>图17：使用存储区域个数的计算建模：</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.029.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.029"></p>
+<p>此外，论文还对使用的LUT和存储区域个数进行了计算建模，如图16和图17所示。其中的参数都可以由计算得出。</p>
+<ol>
+<li><h2 id="对于性能评估的建模"><a href="#对于性能评估的建模" class="headerlink" title="对于性能评估的建模"></a><a name="_toc13946"></a><strong>对于性能评估的建模</strong></h2>为了有效地利用资源，数据传输速度必须大于或等于计算速度。论文对行缓冲区中处理n行输入数据的时间建模如下：</li>
+</ol>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.030.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.030"></p>
+<p>其中，Freq为FPGA的工作频率。II表示流水线的迭代间隔。在论文的实现中，循环是完全流水线化的，因此II &#x3D; 1。Pdepth为管道深度，当循环次数足够大时可以忽略。</p>
+<p>另一方面，对应的输入输出数据的传输时间为:</p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.031.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.031"></p>
+<p>由于要求Ttransfer≤Tcompute，所以带宽需求可以表述为:</p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.032.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.032"></p>
+<p>此外，论文还考虑了Tinit，将输入图像的前n行加载到片上内存并进行滤波的时间：</p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.033.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.033"></p>
+<p>卷积的总运算处理时间是：</p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.034.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.034"></p>
+<p>总的操作次数是：</p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.035.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.035"></p>
+<p>因此，基于快速算法的卷积的有效性能计算如下：</p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.036.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.036"></p>
+<ol start="2">
+<li><h1 id="自动化设计链"><a href="#自动化设计链" class="headerlink" title="自动化设计链"></a><a name="_toc20793"></a><strong>自动化设计链</strong></h1><p><strong>图18：自动化设计链示意图：</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.037.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.037.png"></p>
+</li>
+</ol>
+<p>论文提出了一种将CNN模型映射到FPGA实现的自动工具链。OaS方法同时适用于Winograd算法和FFT算法，激发了统一的数据位置感知体系结构设计。显然，Winograd PE和FFT PE都从行缓冲区中获取数据，并逐块生成输出。因此，将一种算法转换为另一种算法只需要重新配置PE，而不需要对架构进行任何其他更改。为了优化设计，论文中用设计的参数来制定性能和资源利用率，然后依靠这个模型来指导设计空间探索。通过给定的快速算法(Winograd或FFT)，自动工具可以自动将CNN映射到FPGA上，如图18所示。流程由四个步骤组成。在第一步中，将CNN体系结构和FPGA配置输入到设计空间探索引擎(DSEE)中，以获得最优解。在第二步中，基于最优解，开发了自动生成快速卷积函数的代码生成引擎(CGE)。在第3步中，使用Xilinx HLS工具将代码合成为RTL级别。最后，使用Xilinx SDSoC(软件定义的片上系统)工具链来生成比特流。</p>
+<ol start="2">
+<li><h1 id="实验评估测试"><a href="#实验评估测试" class="headerlink" title="实验评估测试"></a><a name="_toc19191"></a><strong>实验评估测试</strong></h1><ol>
+<li><h2 id="实验设置"><a href="#实验设置" class="headerlink" title="实验设置"></a><a name="_toc13241"></a><strong>实验设置</strong></h2>论文在两个FPGA平台上评估技术:1)Xilinx ZC706和2)ZCU102。Xilinx ZC706平台由Kintex-7 FPGA和双ARM Cortex-A9处理器组成。外部内存为1gb DDR3。论文的FPGA实现在这个平台上以166 mHz的频率工作。Xilinx ZCU102由UltraScale FPGA，ARM Cortex-A53处理器，500 mb DDR3组成。论文的FPGA实现在这个平台上以200mHz频率运行。为了测量运行时功率，论文在FPGA平台上插入了一个功率计。</li>
+</ol>
+</li>
+<li><h2 id="Winograd算法的性能分析"><a href="#Winograd算法的性能分析" class="headerlink" title="Winograd算法的性能分析"></a><a name="_toc7089"></a><strong>Winograd算法的性能分析</strong></h2><p>论文将评估分析模型，并使用单个卷积层分析Winograd算法的资源使用情况。论文使用典型的输入特征图尺寸:224(H) × 224(W)， {M &#x3D; N &#x3D; Tn &#x3D; Tm &#x3D; 64}，并尝试两种不同的滤波器尺寸:3 × 3和5 × 5。图17比较了不同输入块大小和并行度下的预测性能和实际性能，并给出了相应的资源利用率。实验在Xilinx ZC706上进行。可以看到论文中的性能预测模型是非常准确的。滤波器3 × 3和5 × 5的平均预测误差分别为15.4%和13.7%。不准确的来源可能是实际带宽和峰值带宽以及DDR访问延迟的差异。</p>
+<p><strong>图19：Winograd算法的性能分析：</strong></p>
+</li>
+</ol>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.038.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.038"></p>
+<p><strong>通过Winograd算法，DSP不再是大多数情况下的限制资源，如图19所示。相反，Bram和内存带宽可能是限制资源的主要因素。</strong>BRAMs的消耗来自几个方面。首先，与空间卷积不同，Winograd卷积需要更多的缓冲区，因为行缓冲区结构。其次，并行Winograd PEs需要内存分区来维持片上内存带宽。最后，当计算效率提高时，片外带宽可能会成为瓶颈。总体而言，Winograd算法节省了DSP，提高了整体资源利用率。</p>
+<ol>
+<li><h2 id="FFT算法的性能分析"><a href="#FFT算法的性能分析" class="headerlink" title="FFT算法的性能分析"></a><a name="_toc20606"></a><strong>FFT算法的性能分析</strong></h2><p>FFT模型的实验结果如图20所示。如前所述，在FFT算法中，FFT大小等于输入块的大小，滤波器被填充到与输入块相同的大小。论文只在单个卷积层中计算两种大小(n &#x3D; 4和n &#x3D; 8)的FFT。因为当FFT大小大于8时，片上内存不足以存储论文框架中的所有缓冲区。平均而言，论文的性能模型的预测误差为10.1%。</p>
+<p><strong>图20：FFT算法的性能分析：</strong></p>
+</li>
+</ol>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.039.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.039"></p>
+<p>从图20中可以看出，由于计算效率的提高，DSP成为了丰富的资源。与基于Winograd的实现相比，基于FFT的实现需要更多的Bram，因为过滤器是离线转换的复数。此外，FFT算法消耗更多的逻辑资源(LUT)。准确地说，与Winograd算法相比，FFT算法中有更多的加法和常数乘法，因为包含复数。注意，2-D-FFT变换需要比1-D-FFT变换多2n倍的操作。然而，在Winograd中，输入块的变换只需要两次常数矩阵乘法。</p>
+<ol>
+<li><h2 id="资源的评估验证"><a href="#资源的评估验证" class="headerlink" title="资源的评估验证"></a><a name="_toc12712"></a><strong>资源的评估验证</strong></h2>在以往应用空间算法的FPGA实现中，性能通常受到DSP数量的限制。然而，当应用快速算法时，可能导致DSP利用率较低，应考虑其他资源的使用情况，如LUT和BRAM。论文对资源模型进行评估。表4列出了来自Xilinx Vivado HLS工具的参数，以指导论文中的资源勘探。对于FFT算法，滤波器被填充到与输入块相同的大小并离线转换，r &#x3D; 5的滤波器不需要参数。对于这两种算法，α和β随着n的增加而急剧增加，因为矩阵大小和常数呈指数增长。对于FFT算法，α和β近似相等，因为FFT和IFFT具有相同的算法复杂度。</li>
+</ol>
+<p><strong>表4：参数在模型中的评估：</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.040.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.040"></p>
+<ol>
+<li><h2 id="具体情况的研究"><a href="#具体情况的研究" class="headerlink" title="具体情况的研究"></a><a name="_toc32364"></a><strong>具体情况的研究</strong></h2><p>论文使用AlexNet、VGGNet和Resnet来评估Winograd算法。FFT在VGGNet和YOLO上进行了测试。表4给出了实现中每个网络的参数。对于ZC706平台，论文选择参数Tm &#x3D; Tn &#x3D; 64，对于ZCU102平台，论文选择参数Tm &#x3D; Tn &#x3D; 128。</p>
+</li>
+<li><h3 id="AlexNet"><a href="#AlexNet" class="headerlink" title="AlexNet"></a><a name="_toc14982"></a><strong>AlexNet</strong></h3><p>AlexNet由五个卷积和三个FC层组成。输入图像为224 × 224。除了第一个卷积层(11×11)，所有的卷积层都使用小滤波器(5 × 5和3 × 3)。对于第一层，论文选择使用空间卷积算法来实现。对于其余层，论文使用Winograd算法的统一3 × 3过滤器。对于5×5过滤器，论文使用四个零填充的3×3过滤器来实现它。由于AlexNet的层间多样性，论文将2&#x2F;3片上资源作为设计空间探索的约束条件。</p>
+</li>
+</ol>
+<p><strong>表5：AlexNet评估</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.041.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.041"></p>
+<p>表5给出了结果。与之前的工作相比，论文将平均卷积性能从61.6 GOP&#x2F;s提高到1006.4 GOP&#x2F;s。对于整体CNN，论文将性能从72.4 GOP&#x2F;s提高到854.6 GOP&#x2F;s。论文的性能低于[43]，这主要有三个原因。</p>
+<ul>
+<li><p>AlexNet的不规则结构。第一层的步幅是4，如果使用Winograd，这使第一层效率低下。</p>
+</li>
+<li><p>[43]中的频率要高得多。</p>
+</li>
+<li><p>Arria 10中的DSP可以实现为两个FP16乘法器。</p>
+<ol>
+<li><h3 id="VGGNet"><a href="#VGGNet" class="headerlink" title="VGGNet"></a><a name="_toc1396"></a><strong>VGGNet</strong></h3><strong>表6：VGGNet评估</strong></li>
+</ol>
+</li>
+</ul>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.042.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.042"></p>
+<p>VGG16由5个输入大小不同的卷积组(224、112、56、28、14)组成。在VGG16中，所有卷积层都是3 × 3滤波器，很适合Winograd算法。因此，论文将95%的片上资源作为设计空间探索的约束条件。表6将论文的技术与之前的工作进行了比较。对于卷积层，论文将平均性能从1283 GOP&#x2F;s提高到2601.4 GOP&#x2F;s。对于整体CNN，论文将性能从866 GOP&#x2F;s提高到2479.6 GOP&#x2F;s。由于Intel FPGA和Xilinx FPGA的DSP配置不同。为了在不同平台之间进行公平的比较，论文还展示了每个平台的总资源效率和能源效率。可以观察到，论文的实现了更好的资源效率，这来自算术复杂度的降低和新架构的实现。</p>
+<p>注意到VGG16的性能比AlexNet高。这是因为VGG16使用了统一的卷积结构，而AlexNet使用了两种不同的卷积结构。论文还发现卷积层的性能随着网络的深入而降低。这是因为初始时间(Tinit)占总时间(Ttotal)较多，初始时间只涉及数据传输，没有实际计算。在ZC706平台上应用FFT快速算法对VGGNet进行加速，并与同样应用FFT算法的其他工作进行比较，性能从123.5 GOP&#x2F;s提高到277.8 GOP&#x2F;s，能效从9.3提高到29.4。</p>
+<ol>
+<li><h3 id="YOLO"><a href="#YOLO" class="headerlink" title="YOLO"></a><a name="_toc13224"></a><strong>YOLO</strong></h3><p>You only look once (YOLO)是一种最先进的网络实时目标检测系统。论文使用Tiny-YOLO版本来评估论文的设计。Tiny-YOLO包含9个卷积层和6个最大池化层。所有卷积层都使用3 × 3滤波器。论文应用FFT算法对YOLO网络进行加速，结果如表7所示，各层详细性能如图21所示。论文注意到前几个层的性能有所提高。这是因为前几层的通道数量相对较少，这意味着更少的数据重用机会，因此这些层的性能受到片外带宽的限制。</p>
+<p><strong>图21：YOLO各层的详细性能：</strong></p>
+</li>
+</ol>
+<p><code>     </code><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.043.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.043"></p>
+<p><strong>表7：YOLO和Resnet的评估</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.044.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.044"> </p>
+<ol>
+<li><h3 id="Resnet"><a href="#Resnet" class="headerlink" title="Resnet"></a><a name="_toc5634"></a><strong>Resnet</strong></h3>Resnet是一种用于图像识别的现代网络，由许多残差块组成。残差块由两个1 × 1卷积层和一个3 × 3卷积层组成。设(2&#x2F;3)片上资源为快速算法的约束条件。采用Winograd算法对3 × 3卷积层进行加速，采用空间卷积算法对1 × 1卷积层进行加速。表7给出了结果。卷积层的性能为163.1 GOP&#x2F;s，整个网络的性能为130.4 GOP&#x2F;s。论文的性能不如其他的工作，这主要来自两个方面：</li>
+</ol>
+<ul>
+<li>在Intel Altera平台上，单个DSP可以实现为两个16×16定点乘法器。</li>
+<li>部分片上资源用于1 × 1滤波器，这些滤波器占剩余块中40%的计算量。</li>
+</ul>
+<ol>
+<li><h2 id="与GPU的比较"><a href="#与GPU的比较" class="headerlink" title="与GPU的比较"></a><a name="_toc6720"></a><strong>与GPU的比较</strong></h2>论文对GPU和FPGA平台进行比较。对于GPU，论文在NVIDIA TitanX平台上使用Caffe框架来测量VGG16的性能。为了做一个公平的比较，论文用最新的cuDNN[47]测试了TitanX的性能，因为Winograd和FFT算法也包含在cuDNN中，GPU上的Power是使用NVIDIA剖析工具获得的。表8显示了比较结果。在cuDNN中，Winograd算法优于FFT算法，因为FFT算法需要大量的内存空间来存储中间结果，比Winograd需要更多的时间。TitanX提供了更好的性能，但论文在Xilinx ZCU102 FPGA上的实现实现了更好的能源效率(2.5倍)。</li>
+</ol>
+<p><strong>表8：与GPU的比较</strong></p>
+<p><img src="9d3964fd/Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.045.png" alt="Aspose.Words.5ffe5bf3-f88b-45a4-9a96-5d3676b52f58.045"></p>
+<h1 id="9-总结"><a href="#9-总结" class="headerlink" title="9. 总结"></a><a name="_toc105073190"></a><a name="_toc29971"></a><strong>9. 总结</strong></h1><p>本次调研了论文《Evaluating Fast Algorithm for Convolutional Neural Networks on FPGAs》。FPGA已被广泛用于加速基于CNN的应用。然而，以往基于空间算法的实现主要受到FPGA计算能力的限制。在论文中，提出了一种基于快速算法的FPGA框架，该框架可以有效减少卷积层的乘法次数。针对Winograd算法和FFT算法设计了一个高效的PE引擎。为了指导快速的设计空间探索，论文还开发了分析模型来估计资源的使用和性能。在ZCU102 FPGA平台上实现的峰值性能达到2479.6 GOP&#x2F;s，优于以往的所有工作。通过本次调研论文，我掌握了深度学习和卷积神经网络的计算过程，了解了不同的优化策略和新型架构，为之后的深入学习奠定了基础。</p>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a><a name="_toc105073191"></a><a name="_toc12708"></a><strong>参考文献</strong></h1><p>[1] C. Zhang et al, “Energy-efficient CNN implementation on a deeply pipelined FPGA cluster,” in Proc. Int. Symp. Low Power Electron. </p>
+<p>[2] N. Suda et al, “Throughput-optimized OpenCL-based FPGA accelerator for large-scale convolutional neural networks,” in Proc. ACM&#x2F;SIGDA Int.</p>
+<p>[3] J. Qiu et al, “Going deeper with embedded FPGA platform for convolutional neural network,” in Proc. ACM&#x2F;SIGDA Int. Symp. Field Program.</p>
+<p>[4] Y . Ma, N. Suda, Y . Cao, J. S. Seo, and S. Vrudhula, “Scalable and modularized RTL compilation of convolutional neural networks onto FPGA,” in Proc. Int. Conf. Field Program. </p>
+<p>[5] H. Li et al, “A high performance FPGA-based accelerator for largescale convolutional neural networks,” in Proc. Int. Conf. Field Program.</p>
+<p>[6] Y . Ma, Y . Cao, S. Vrudhula, and J.-S. Seo, “Optimizing loop operation and dataflow in FPGA acceleration of deep convolutional neural networks,” in Proc. ACM&#x2F;SIGDA Int. </p>
+<p>[7] J. Zhang and J. Li, “Improving the performance of OpenCL-based FPGA accelerator for convolutional neural network,” in Proc. ACM&#x2F;SIGDA Int.</p>
+<p>[8] K. He, X. Zhang, S. Ren, and J. Sun, “Delving deep into rectifiers: Surpassing human-level performance on ImageNet classification,” in Proc. IEEE Int. Conf. Comput. Vis., 2015, pp. 1026–1034.</p>
+<p>[9] R. Girshick, J. Donahue, T. Darrell, and J. Malik, “Rich feature hierarchies for accurate object detection and semantic segmentation,” in Proc.</p>
+<p>IEEE Conf. Comput. Vis. Pattern Recognit., 2014, pp. 580–587.</p>
+<p>[10] A. Krizhevsky, I. Sutskever, and G. E. Hinton, “ImageNet classification with deep convolutional neural networks,” in Proc. Adv. Neural Inf.</p>
+<p>[11] K. He, X. Zhang, S. Ren, and J. Sun, “Deep residual learning for image recognition,” in Proc. IEEE Conf. Comput. Vis. Pattern Recognit., 2016, pp. 770–778.</p>
+<p>[12] C. Szegedy et al, “Going deeper with convolutions,” in Proc. IEEE Conf. Comput. Vis. Pattern Recognit., 2015, pp. 1–9.</p>
+<p>[13] C. Zhang et al, “Optimizing FPGA-based accelerator design for deep convolutional neural networks,” in Proc. ACM&#x2F;SIGDA Int. Symp. Field Program. Gate Arrays, 2015, pp. 161–170.</p>
+<p>[14] X. Zhang, J. Zou, X. Ming, K. He, and J. Sun, “Efficient and accurate approximations of nonlinear convolutional networks,” in Proc. IEEE Conf. Comput. Vis. Pattern Recognit., 2015, pp. 1984–1992.</p>
+<p>[15] Y .-H. Chen, J. Emer, and V . Sze, “Eyeriss: A spatial architecture for energy-efficient dataflow for convolutional neural networks,” in Proc.</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zty-user.github.io">ZTY</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zty-user.github.io/post/9d3964fd.html">https://zty-user.github.io/post/9d3964fd.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://zty-user.github.io" target="_blank">ZTY's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/FPGA/">-FPGA</a></div><div class="post-share"><div class="social-share" data-image="/img/butterfly-icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related  no-desc" href="/post/67ef1652.html" title="new_start"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">new_start</div></div></div></a><a class="pagination-related" href="/post/a049c696.html" title="【模集】源极跟随器的设计与改进"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">【模集】源极跟随器的设计与改进</div></div><div class="info-2"><div class="info-item-1">目录 一、 待解决的问题	3 二、 待仿真的电路	3 三、 计算与仿真结果分析	5 3.1带有源极电阻的源极跟随器	6 3.2利用MOS管作为电流偏置的源极跟随器	7 3.3 FVF(Flipped Voltage Follower)	9 3.4 三种源极跟随器结构Vin−Vout非线性偏差比较	10 四、 心得	11  待解决的问题  源极跟随器的主要结构如图（1）所示，其在理想情况下的输出电压Vout与输入电压Vin的关系如图（2）所示，可以发现Vout会跟随Vin等幅增大，它们的差值Vin−Vout&#x3D;VGS不会改变，体现了电压跟随的作用。但是实际情况下，Vout不能忠实地跟随Vin，而会产生一定的偏差，如图（3）所示。请分析带有源极电阻和带有MOS管的源极跟随器线性度和增益的变化趋势，并思考如何改善源极跟随器的线性度，让Vout忠实地跟随Vin发生变化。                图1：理想情况下的源极跟随器         图2：源极跟随器的电压转移曲线    ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/post/b7e78d96.html" title="【FPGA】基于SMIMS开发板的FDE-Lab"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-01</div><div class="info-item-2">【FPGA】基于SMIMS开发板的FDE-Lab</div></div><div class="info-2"><div class="info-item-1">demo:  https://www.bilibili.com/video/BV1tx4y1A7wZ/?vd_source=3d19a3d894313e266a040f306849e552 Contents Chapter 1 Introduction	3 1.1 The purpose of the experiment	3 1.2 Experimental Procedure of FDE Lab	3 Chapter 2. Name Display Experiment	5 2.1 The Text Display of Name	5 2.1.1 Document Directory	5 2.1.2 Experimental Principle	6 2.1.3 Source Code Design	7 2.2 The Image Display of Name	10 2.2.1 Document Directory	10 2.1.2 Experimental Principle	10 2.2.3 Source Code Design	12 Chapter 3. Aerial...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">ZTY</div><div class="author-info-description">This blog mainly shares my thoughts on learning.</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">1. 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E7%9F%A5%E8%AF%86"><span class="toc-number">2.</span> <span class="toc-text">背景知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CNN%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.1.</span> <span class="toc-text">CNN介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E4%BA%8ECNNs%E7%9A%84%E5%BF%AB%E9%80%9F%E7%AE%97%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">适用于CNNs的快速算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EWinograd%E7%AE%97%E6%B3%95%E7%9A%84%E5%8D%B7%E7%A7%AF%E8%BF%90%E7%AE%97"><span class="toc-number">2.2.1.</span> <span class="toc-text">基于Winograd算法的卷积运算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EFFT%E7%AE%97%E6%B3%95%E7%9A%84%E5%8D%B7%E7%A7%AF%E8%BF%90%E7%AE%97"><span class="toc-number">2.2.2.</span> <span class="toc-text">基于FFT算法的卷积运算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Winograd%E5%92%8CFFT%E7%AE%97%E6%B3%95%E7%9A%84%E6%AF%94%E8%BE%83"><span class="toc-number">2.2.3.</span> <span class="toc-text">Winograd和FFT算法的比较</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">数据处理过程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">4.</span> <span class="toc-text">主要架构设计</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E6%95%B4%E4%BD%93%E6%A6%82%E8%A7%88"><span class="toc-number">4.1.</span> <span class="toc-text">架构整体概览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%8C%E7%BC%93%E5%86%B2%E5%8C%BA%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">4.2.</span> <span class="toc-text">行缓冲区的设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF%E5%88%86%E5%9D%97%E6%8A%80%E6%9C%AF"><span class="toc-number">4.3.</span> <span class="toc-text">循环分块技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF%E5%88%86%E5%9D%97-Loop-Tiling-%E7%9A%84%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D"><span class="toc-number">4.3.1.</span> <span class="toc-text">循环分块(Loop Tiling)的概念介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E4%B8%AD%E5%BE%AA%E7%8E%AF%E5%88%86%E5%9D%97%E6%8A%80%E6%9C%AF%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">4.3.2.</span> <span class="toc-text">论文中循环分块技术的应用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PE%E5%8D%95%E5%85%83%E8%AE%BE%E8%AE%A1"><span class="toc-number">5.</span> <span class="toc-text">PE单元设计</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EWinograd%E7%AE%97%E6%B3%95%E7%9A%84PE%E8%AE%BE%E8%AE%A1"><span class="toc-number">5.1.</span> <span class="toc-text">基于Winograd算法的PE设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EFFT%E7%AE%97%E6%B3%95%E7%9A%84PE%E8%AE%BE%E8%AE%A1"><span class="toc-number">5.2.</span> <span class="toc-text">基于FFT算法的PE设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PE%E5%B9%B6%E8%A1%8C%E5%8C%96%E4%B8%8E%E6%9C%AC%E5%9C%B0%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96"><span class="toc-number">5.3.</span> <span class="toc-text">PE并行化与本地内存优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80-Loop-Unrolling-%E5%AE%9E%E7%8E%B0PE%E7%9A%84%E5%B9%B6%E8%A1%8C%E5%8C%96"><span class="toc-number">5.3.1.</span> <span class="toc-text">利用循环展开(Loop Unrolling)实现PE的并行化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96-Local-Memory-Promotion"><span class="toc-number">5.3.2.</span> <span class="toc-text">本地内存优化(Local Memory Promotion)</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%84%E4%BC%B0%E8%B5%84%E6%BA%90%E5%92%8C%E6%80%A7%E8%83%BD%E7%9A%84%E6%A8%A1%E5%9E%8B"><span class="toc-number">6.</span> <span class="toc-text">评估资源和性能的模型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8E%E8%B5%84%E6%BA%90%E8%AF%84%E4%BC%B0%E7%9A%84%E5%BB%BA%E6%A8%A1"><span class="toc-number">6.1.</span> <span class="toc-text">对于资源评估的建模</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8E%E6%80%A7%E8%83%BD%E8%AF%84%E4%BC%B0%E7%9A%84%E5%BB%BA%E6%A8%A1"><span class="toc-number">6.2.</span> <span class="toc-text">对于性能评估的建模</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E5%8C%96%E8%AE%BE%E8%AE%A1%E9%93%BE"><span class="toc-number">7.</span> <span class="toc-text">自动化设计链</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E8%AF%84%E4%BC%B0%E6%B5%8B%E8%AF%95"><span class="toc-number">8.</span> <span class="toc-text">实验评估测试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E8%AE%BE%E7%BD%AE"><span class="toc-number">8.1.</span> <span class="toc-text">实验设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Winograd%E7%AE%97%E6%B3%95%E7%9A%84%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="toc-number">8.2.</span> <span class="toc-text">Winograd算法的性能分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FFT%E7%AE%97%E6%B3%95%E7%9A%84%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="toc-number">8.3.</span> <span class="toc-text">FFT算法的性能分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E7%9A%84%E8%AF%84%E4%BC%B0%E9%AA%8C%E8%AF%81"><span class="toc-number">8.4.</span> <span class="toc-text">资源的评估验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E6%83%85%E5%86%B5%E7%9A%84%E7%A0%94%E7%A9%B6"><span class="toc-number">8.5.</span> <span class="toc-text">具体情况的研究</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AlexNet"><span class="toc-number">8.5.1.</span> <span class="toc-text">AlexNet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VGGNet"><span class="toc-number">8.5.2.</span> <span class="toc-text">VGGNet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#YOLO"><span class="toc-number">8.5.3.</span> <span class="toc-text">YOLO</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resnet"><span class="toc-number">8.5.4.</span> <span class="toc-text">Resnet</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8EGPU%E7%9A%84%E6%AF%94%E8%BE%83"><span class="toc-number">8.6.</span> <span class="toc-text">与GPU的比较</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#9-%E6%80%BB%E7%BB%93"><span class="toc-number">9.</span> <span class="toc-text">9. 总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">10.</span> <span class="toc-text">参考文献</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/67ef1652.html" title="new_start">new_start</a><time datetime="2024-11-11T09:40:58.000Z" title="发表于 2024-11-11 17:40:58">2024-11-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/9d3964fd.html" title="【FPGA】论文调研——Evaluating Fast Algorithm for CNNs and FPGAs">【FPGA】论文调研——Evaluating Fast Algorithm for CNNs and FPGAs</a><time datetime="2023-04-04T13:29:08.000Z" title="发表于 2023-04-04 21:29:08">2023-04-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/a049c696.html" title="【模集】源极跟随器的设计与改进">【模集】源极跟随器的设计与改进</a><time datetime="2023-04-01T13:55:39.000Z" title="发表于 2023-04-01 21:55:39">2023-04-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/5238aa9d.html" title="【模集】纳米级晶体管的设计">【模集】纳米级晶体管的设计</a><time datetime="2023-04-01T13:39:26.000Z" title="发表于 2023-04-01 21:39:26">2023-04-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/da53556e.html" title="【模集】共源级MOS放大电路增益、负载的讨论分析">【模集】共源级MOS放大电路增益、负载的讨论分析</a><time datetime="2023-04-01T13:23:27.000Z" title="发表于 2023-04-01 21:23:27">2023-04-01</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2024 By ZTY</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
