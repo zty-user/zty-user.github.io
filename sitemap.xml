@@ -2,15 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://zty-user.github.io/post/48758e8f.html</loc>
-    
-    <lastmod>2024-11-14</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://zty-user.github.io/post/67ef1652.html</loc>
     
     <lastmod>2024-11-11</lastmod>
@@ -179,13 +170,6 @@
   
   <url>
     <loc>https://zty-user.github.io/tags/%E6%A8%A1%E9%9B%86/</loc>
-    <lastmod>2024-11-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://zty-user.github.io/tags/divider/</loc>
     <lastmod>2024-11-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
